@@ -4,11 +4,13 @@
 - Source code: https://github.com/matrix-org/synapse/blob/v1.28.0/synapse/events/spamcheck.py
   - FileInfo: https://github.com/matrix-org/synapse/blob/v1.28.0/synapse/rest/media/v1/_base.py#L289
   - ReadableFileWrapper (file_wrapper): https://github.com/matrix-org/synapse/blob/v1.28.0/synapse/rest/media/v1/media_storage.py#L330
+  - ModuleApi: https://github.com/matrix-org/synapse/blob/v1.28.0/synapse/module_api/__init__.py 
+  - MediaRepository https://github.com/matrix-org/synapse/blob/v1.28.0/synapse/rest/media/v1/media_repository.py 
 
 - Other Examples:
   - https://github.com/t2bot/synapse-simple-antispam
   - https://github.com/matrix-org/mjolnir/tree/master/synapse_antispam
-
+  - https://github.com/matrix-org/synapse-spamcheck-badlist
 
 ## How to build:
 
@@ -34,6 +36,21 @@ deactivate
 ```
 
 replace `${local_file_path}`
+
+I needed to install `sudo apt-get install python3-distutils`  
+
+Edit Matrix-Synapse Config:
+
+```
+spam_checker:
+  module: "synapse_mediacheck.SynapseMediacheck"
+  config:
+    media_path: "/var/lib/matrix-synapse/media/local_content/"
+    allowed_mimetypes:
+      - "image/jpeg"
+      - "image/png"
+      - "image/gif"
+```
 
 Restart Matrix-Synapse
 

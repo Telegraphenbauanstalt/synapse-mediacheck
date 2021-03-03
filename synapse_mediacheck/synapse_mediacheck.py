@@ -1,4 +1,5 @@
 import logging
+import puremagic
 
 logger = logging.getLogger(__name__)
 #logger = logging.getLogger("synapse_mediacheck")
@@ -7,7 +8,10 @@ class SynapseMediacheck(object):
     def __init__(self, config, api):
         self.config = config
         self.api = api
-        logger.info("SynapseMediacheck initialized!")
+        self._media_path = config.get("media_path", "")
+        self._allowed_mimetypes = config.get("allowed_mimetypes", [])
+
+        logger.info("SynapseMediacheck initialized! _media_path: %s, _allowed_mimetypes: %s", self._media_path, self._allowed_mimetypes)
 
     def check_event_for_spam(self, event):
         logger.info("check_event_for_spam %s, event_id:%s, content:%s", event, event.event_id, event.get("content", "") )
@@ -20,11 +24,22 @@ class SynapseMediacheck(object):
         file_info.server_name, file_info.file_id, 
         file_info.url_cache, file_info.thumbnail, file_info.thumbnail_width, file_info.thumbnail_height, 
         file_info.thumbnail_method, file_info.thumbnail_type, file_info.thumbnail_length )
-        return False  # allow all media
 
-        # I don't have a clue how to get the content-type of the uploaded media file,
-        # perhaps MediaRepository https://github.com/matrix-org/synapse/blob/v1.28.0/synapse/rest/media/v1/media_repository.py 
-        # could help?
+        #logger.info("hs: %s hostname: %s", self.api._hs, self.api._hs.hostname)
+
+        mime = ''
+        if file_info.thumbnail: 
+            mime = file_info.thumbnail_type
+        else: 
+            mime = puremagic.from_file(self._media_path + file_info.file_id[:2] 
+            + '/' + file_info.file_id[2:4] + '/' + file_info.file_id[4:], True) # todo - get path from environment/config/api
+        logger.info("mime: %s", mime)
+
+        for m in self._allowed_mimetypes:
+            if mime == m:
+                return False # allowed
+        
+        return True # blocked
 
     def user_may_invite(self, inviter_userid, invitee_userid, room_id):
         return True  # allow all invites
