@@ -17,19 +17,15 @@ class SynapseMediacheck(object):
             check_media_file_for_spam=self.check_media_file_for_spam,
         )
 
-    async def check_media_file_for_spam(file_wrapper: "synapse.rest.media.v1.media_storage.ReadableFileWrapper",
+        logger.info("init ok, media_path: %s", self._media_path)
+
+    async def check_media_file_for_spam(self, file_wrapper: "synapse.rest.media.v1.media_storage.ReadableFileWrapper",
                                         file_info: "synapse.rest.media.v1._base.FileInfo",
                                         ) -> bool:
         logger.info("check_media_file_for_spam - server_name: %s, file_id: %s, "
                     "url_cache: %s, thumbnail: %s, thumbnail_width: %s, thumbnail_height: %s, "
                     "thumbnail_method: %s, thumbnail_type: %s, thumbnail_length: %s",
-                    "thumbnail_method: %s, thumbnail_type: %s, thumbnail_length: %s",
-                    "thumbnail_method: %s, thumbnail_type: %s, thumbnail_length: %s",
                     file_info.server_name, file_info.file_id,
-                    file_info.server_name, file_info.file_id,
-                    file_info.server_name, file_info.file_id,
-                    file_info.url_cache, file_info.thumbnail, file_info.thumbnail_width, file_info.thumbnail_height,
-                    file_info.url_cache, file_info.thumbnail, file_info.thumbnail_width, file_info.thumbnail_height,
                     file_info.url_cache, file_info.thumbnail, file_info.thumbnail_width, file_info.thumbnail_height,
                     file_info.thumbnail_method, file_info.thumbnail_type, file_info.thumbnail_length)
 
@@ -47,6 +43,7 @@ class SynapseMediacheck(object):
             if mime == m:
                 return False  # allowed
 
+        logger.warning("file %s blocked (mime-type: %s)!", file_info.file_id, mime)
         return True  # blocked
 
     @staticmethod
