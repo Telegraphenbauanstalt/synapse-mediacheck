@@ -17,11 +17,11 @@
 https://packaging.python.org/tutorials/packaging-projects/ 
 
 ```
-cd ${path_to_yout_python_test_dir}
+cd ${path_to_your_python_test_dir}
 python3 -m build
 ```
 
-replace `${path_to_yout_python_test_dir}`
+replace `${path_to_your_python_test_dir}`
 
 scp to server
 
@@ -42,14 +42,14 @@ I needed to install `sudo apt-get install python3-distutils`
 Edit Matrix-Synapse Config:
 
 ```
-spam_checker:
-  module: "synapse_mediacheck.SynapseMediacheck"
-  config:
-    media_path: "/var/lib/matrix-synapse/media/local_content/"
-    allowed_mimetypes:
-      - "image/jpeg"
-      - "image/png"
-      - "image/gif"
+modules:
+  - module: "synapse_mediacheck.SynapseMediacheck"
+    config:
+      media_path: "/var/lib/matrix-synapse/media/local_content/"
+      allowed_mimetypes:
+        - "image/jpeg"
+        - "image/png"
+        - "image/gif"
 ```
 
 Restart Matrix-Synapse
